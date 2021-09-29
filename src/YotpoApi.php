@@ -67,17 +67,17 @@ class YotpoApi
 
     public function apiIsNotEnabled()
     {
-        return !$this->apiEnabled;
+        return ! $this->apiEnabled;
     }
 
     public function loyaltyIsNotEnabled()
     {
-        return !$this->loyaltyEnabled;
+        return ! $this->loyaltyEnabled;
     }
 
     public function setUToken(): void
     {
-        if ($this->apiEnabled){
+        if ($this->apiEnabled) {
             //get cached token for the last 7 days
             $this->uToken = Cache::remember('yotpoToken', 60 * 60 * 24 * 7, function () {
                 return $this->getOauthToken();
@@ -97,12 +97,9 @@ class YotpoApi
     {
         $data['secret'] = $this->secretKey;
         $response = $this->sendRequest($data, 'POST', 'access_tokens');
+
         return optional($response)['access_token'];
     }
-
-
-
-
 
     /*--------------------------------------------
      *
@@ -129,6 +126,7 @@ class YotpoApi
             'ip_address' => $ip,
             'user_agent' => $userAgent,
         ];
+
         return $this->sendLoyaltyRequest($data, 'POST', 'actions');
     }
 
@@ -142,11 +140,12 @@ class YotpoApi
             'tags' => $customerHash['tags'],
             'has_account' => true,
         ];
-        if (!empty($customerHash['phone'])){
+        if (! empty($customerHash['phone'])) {
             $data ['phone_number'] = $customerHash['phone'];
             //if unable to send phone_number in full E.164 format. Example: "US", "GB"..
             $data ['country_iso_code'] = $customerHash['address']['country_code'];
         }
+
         return $this->sendLoyaltyRequest($data, 'POST', 'customers');
     }
 
@@ -154,6 +153,7 @@ class YotpoApi
     public function getLoyaltyCustomer(array $customerHash)
     {
         $action = 'customers?customer_id=' . $customerHash['user_id'] . '&with_referral_code=false&with_history=false';
+
         return $this->sendLoyaltyRequest([], 'GET', $action);
     }
 
@@ -165,6 +165,7 @@ class YotpoApi
             'day' => $day,
             'month' => $month,
         ];
+
         return $this->sendLoyaltyRequest($data, 'POST', 'customer_anniversary');
     }
 
@@ -180,8 +181,9 @@ class YotpoApi
             'customer_email' => $customerHash['email'],
             'redemption_option_id' => $redemptionOptionId,
             'delay_points_deduction' => true,
-            'currency' => $customerHash['currency']
+            'currency' => $customerHash['currency'],
         ];
+
         return $this->sendLoyaltyRequest($data, 'POST', 'redemptions');
     }
 
@@ -193,8 +195,9 @@ class YotpoApi
     public function CancelLoyaltyRedemption(string $rewardText, int $pointRedemptionId)
     {
         $data = [
-            'reward_text' => $rewardText
+            'reward_text' => $rewardText,
         ];
+
         return $this->sendLoyaltyRequest($data, 'POST', 'redemptions/' . $pointRedemptionId . '/cancellation_completed');
     }
 
@@ -213,6 +216,7 @@ class YotpoApi
     public function getLoyaltyRedemptionOptions(array $customerHash, bool $offline = false)
     {
         $query = '?customer_id='.$customerHash['user_id'].'&is_offline='.$offline;
+
         return $this->sendLoyaltyRequest([], 'GET', 'redemption_options'.$query);
     }
 
@@ -232,6 +236,7 @@ class YotpoApi
             'email' => $customerHash['email'],
             'first_name' => $customerHash['name'],
         ];
+
         return $this->sendLoyaltyRequest($data, 'POST', 'referral/referrer');
     }
 
@@ -246,6 +251,7 @@ class YotpoApi
             'customer_id' => $customerHash['user_id'],
             'emails' => $emails,
         ];
+
         return $this->sendLoyaltyRequest($data, 'POST', 'referral/share');
     }
 
@@ -257,6 +263,7 @@ class YotpoApi
     public function getLoyaltyActiveCampaigns(array $customerHash, bool $withStatus = false)
     {
         $query = '?customer_id='.$customerHash['user_id'].'&with_status='.$withStatus;
+
         return $this->sendLoyaltyRequest([], 'GET', 'campaigns'.$query);
     }
 
@@ -266,14 +273,14 @@ class YotpoApi
      *
      * Be sure that the user is authenticated before using this endpoint
      * */
-    public function createLoyaltyOrder(array $purchaseHash, string $status= 'paid', string $ip = null, string $userAgent = null, bool $ignoreIpUa = true)
+    public function createLoyaltyOrder(array $purchaseHash, string $status = 'paid', string $ip = null, string $userAgent = null, bool $ignoreIpUa = true)
     {
         $data = [
             'order_id' => $purchaseHash['order_number'],
             'customer_email' => $purchaseHash['customer']['email_address'],
             'customer_id' => $purchaseHash['customer']['external_id'],
-            'total_amount_cents' => $purchaseHash['total_price']*100, //The total amount the customer spent in cents.
-            'discount_amount_cents' => $purchaseHash['discount_amount']*100,//The total amount the customer saved using a discount in cents
+            'total_amount_cents' => $purchaseHash['total_price'] * 100, //The total amount the customer spent in cents.
+            'discount_amount_cents' => $purchaseHash['discount_amount'] * 100,//The total amount the customer saved using a discount in cents
             'currency_code' => $purchaseHash['currency'],
             'coupon_code' => $purchaseHash['coupon_code'],
             'tags' => $purchaseHash['tags'],
@@ -282,8 +289,9 @@ class YotpoApi
             'user_agent' => $userAgent,
             'ignore_ip_ua' => $ignoreIpUa,//If set to true, this will ignore the ip_address & user_agent fraud checks
             'channel_type' => 'online',
-            'created_at' => $purchaseHash['created_at']
+            'created_at' => $purchaseHash['created_at'],
         ];
+
         return $this->sendLoyaltyRequest($data, 'POST', 'orders');
     }
 
@@ -296,12 +304,12 @@ class YotpoApi
     {
         $data = [
             'order_id' => $orderId,
-            'total_amount_cents' => (int)$totalRefunded*100, //The total amount in cents.
+            'total_amount_cents' => (int)$totalRefunded * 100, //The total amount in cents.
             'currency' => $currencyCode,
         ];
+
         return $this->sendLoyaltyRequest($data, 'POST', 'refunds');
     }
-
 
     /*
      * Fetch VIP Tiers
@@ -317,14 +325,9 @@ class YotpoApi
     public function userExistsInLoyaltyProgram(string $email)
     {
         $data = ['email' => $email];
+
         return $this->sendLoyaltyRequest($data, 'GET', 'privacy/data/exists')['has_data'];
     }
-
-
-
-
-
-
 
     /*--------------------------------------------
      *
@@ -334,7 +337,6 @@ class YotpoApi
      *
      *
      * ____________________________________________*/
-
 
     public function createOrUpdateCustomer(array $customerHash)
     {
@@ -351,11 +353,12 @@ class YotpoApi
                 'tags' => $customerHash['tags'],
                 'accepts_sms_marketing' => true,
                 'accepts_email_marketing' => true,
-            ]
+            ],
         ];
-        if (!empty($customerHash['phone'])){
+        if (! empty($customerHash['phone'])) {
             $data ['customer']['phone_number'] = $customerHash['phone'];
         }
+
         return $this->sendRequest($data, 'PATCH', 'customers');
     }
 
@@ -364,9 +367,10 @@ class YotpoApi
         $data = [
             'subscriber' => [
                 'phone' => $phone,
-                'list_id' =>$listId,
-            ]
+                'list_id' => $listId,
+            ],
         ];
+
         return $this->sendRequest($data, 'POST', 'subscribers');
     }
 
@@ -385,9 +389,10 @@ class YotpoApi
                 'billing_address' => $purchaseHash['customer_address'],
                 'shipping_address' => $purchaseHash['customer_address'],
                 'line_items' => $purchaseHash['order_items'],
-                'fulfillments' => $purchaseHash['order_fulfillments']
-            ]
+                'fulfillments' => $purchaseHash['order_fulfillments'],
+            ],
         ];
+
         return $this->sendRequest($data, 'POST', 'register_purchase');
     }
 
@@ -406,12 +411,12 @@ class YotpoApi
                 'billing_address' => $orderHash['customer_address'],
                 'shipping_address' => $orderHash['customer_address'],
                 'line_items' => $orderHash['order_items'],
-                'fulfillments' => $orderHash['order_fulfillments']
-            ]
+                'fulfillments' => $orderHash['order_fulfillments'],
+            ],
         ];
+
         return $this->sendRequest($data, 'POST', 'orders');
     }
-
 
     /*--------------------------------------------
      *
@@ -425,8 +430,7 @@ class YotpoApi
     protected function sendRequest($data, $type, $action): ?array
     {
         try {
-            if ($this->apiIsNotEnabled())
-            {
+            if ($this->apiIsNotEnabled()) {
                 return null;
             }
             $client = new Client();
@@ -434,20 +438,20 @@ class YotpoApi
                 'body' => json_encode($data),
                 'headers' => [
                     'Content-Type' => 'application/json',
-                    'X-Yotpo-Token' => $this->getUToken()
+                    'X-Yotpo-Token' => $this->getUToken(),
                 ],
             ])->getBody();
 
             return json_decode($body, true);
         } catch (GuzzleException | Exception $e) {
-            if ($e->getCode() === 401){
+            if ($e->getCode() === 401) {
                 //if token expires we need to generate a new token
                 $this->resetUToken();
             }
-            if ($e->getCode() !== 404)
-            {
+            if ($e->getCode() !== 404) {
                 Log::error($e);
             }
+
             return null;
         }
     }
@@ -455,8 +459,7 @@ class YotpoApi
     protected function sendLoyaltyRequest($data, $type, $action): ?array
     {
         try {
-            if ($this->loyaltyIsNotEnabled())
-            {
+            if ($this->loyaltyIsNotEnabled()) {
                 return null;
             }
             $client = new Client();
@@ -465,16 +468,16 @@ class YotpoApi
                 'headers' => [
                     'Content-Type' => 'application/json',
                     'x-guid' => $this->getLoyaltyGuid(),
-                    'x-api-key' => $this->getLoyaltyApiKey()
+                    'x-api-key' => $this->getLoyaltyApiKey(),
                 ],
             ])->getBody();
 
             return json_decode($body, true);
         } catch (GuzzleException | Exception $e) {
-            if ($e->getCode() !== 404)
-            {
+            if ($e->getCode() !== 404) {
                 Log::error($e);
             }
+
             return null;
         }
     }

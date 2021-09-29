@@ -16,26 +16,26 @@ trait YotpoPurchase
     */
     public function yotpoApiPurchasedData(string $tags = 'website', string $currencyCode = null, string $countryCode = null)
     {
-        $orderItems = $this->items->map(function ($item) use($currencyCode){
+        $orderItems = $this->items->map(function ($item) use ($currencyCode) {
             return [
                 'quantity' => $item->quantity,
-                'subtotal_price' => (double)$item->total,
-                'total_price' => (double)$item->total,
+                'subtotal_price' => (float)$item->total,
+                'total_price' => (float)$item->total,
                 'product' => [
                     'external_id' => $item->product_id,
                     'name' => $item->product->name,
                     'url' => route('products.index', $item->product->slug),
                     'image_url' => $item->product->featured_image_url(),
-                    'price' => (double)$item->product->price,
-                    'currency' => $currencyCode??config('yotpo.currency'),
+                    'price' => (float)$item->product->price,
+                    'currency' => $currencyCode ?? config('yotpo.currency'),
                     'inventory_quantity' => $item->product->quantity,
                     'is_discontinued' => false,
                     'brand' => $item->product->brand_name,
-                    'sku' => $item->product->sku
-                ]
+                    'sku' => $item->product->sku,
+                ],
             ];
         });
-        $fulfilled_items = $this->items->map(function ($item){
+        $fulfilled_items = $this->items->map(function ($item) {
             return [
                 'external_product_id' => $item->product_id,
                 'quantity' => $item->quantity,
@@ -44,10 +44,10 @@ trait YotpoPurchase
 
         return [
             'order_number' => $this->order_number,
-            'subtotal_price' => (double)$this->sub_total,
-            'discount_amount' => (double)$this->discount_amount,
-            'total_price' => (double)$this->total,
-            'currency' => $currencyCode??config('yotpo.currency'),
+            'subtotal_price' => (float)$this->sub_total,
+            'discount_amount' => (float)$this->discount_amount,
+            'total_price' => (float)$this->total,
+            'currency' => $currencyCode ?? config('yotpo.currency'),
             'payment_method' => $this->payment_method->description,
             'payment_status' => 'paid',
             'coupon_code' => $this->coupon_code,
@@ -63,7 +63,7 @@ trait YotpoPurchase
                 'address1' => $this->customer_address,
                 'city' => $this->customer_city,
                 'zip' => $this->customer_postcode,
-                'country_code' => $countryCode??config('yotpo.country'),
+                'country_code' => $countryCode ?? config('yotpo.country'),
             ],
             'order_items' => $orderItems,
             'order_fulfillments' => [
@@ -74,12 +74,12 @@ trait YotpoPurchase
                     'shipment_status' => 'delivered',
                     'tracking_company' => config('carrier.'.$this->shipment->carrier_code.'.label'),
                     'tracking_url' => $this->shipment->carrier_url.$this->shipment->track_number,
-                    'tracking_number' => $this->shipment->track_number
+                    'tracking_number' => $this->shipment->track_number,
                 ],
-                'fulfilled_items' => $fulfilled_items
+                'fulfilled_items' => $fulfilled_items,
             ],
             'tags' => $tags,
-            'created_at' => $this->created_at->format('Y-m-d\TH:i:s\Z')
+            'created_at' => $this->created_at->format('Y-m-d\TH:i:s\Z'),
         ];
     }
 }

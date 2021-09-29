@@ -21,7 +21,7 @@ class YotpoApiServiceProvider extends PackageServiceProvider
 
     public function registeringPackage()
     {
-        $this->app->singleton('yotpoApi', function() {
+        $this->app->singleton('yotpoApi', function () {
             return new YotpoApi();
         });
     }

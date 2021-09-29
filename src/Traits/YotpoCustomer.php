@@ -2,7 +2,7 @@
 
 namespace Combindma\YotpoApi\Traits;
 
-Trait YotpoCustomer
+trait YotpoCustomer
 {
     public function yotpoApiData(string $tags = 'registred,customer', string $currencyCode = null, string $countryCode = null)
     {
@@ -15,11 +15,11 @@ Trait YotpoCustomer
                 'address1' => $this->address,
                 'city' => $this->city,
                 'zip' => $this->postcode,
-                'country_code' => $countryCode??config('yotpo.country'),
+                'country_code' => $countryCode ?? config('yotpo.country'),
             ],
-            'currency' => $currencyCode??config('yotpo.currency'),
+            'currency' => $currencyCode ?? config('yotpo.currency'),
             'tags' => $tags,
-            'created_at' => $this->created_at->format('Y-m-d\TH:i:s\Z')
+            'created_at' => $this->created_at->format('Y-m-d\TH:i:s\Z'),
         ];
     }
 }
