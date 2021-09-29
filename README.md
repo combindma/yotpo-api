@@ -1,63 +1,67 @@
-# :package_description
+# Yotpo Core API V3 & Loyalty & Referrals API implementation for Laravel
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/:vendor_slug/:package_slug/run-tests?label=tests)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/:vendor_slug/:package_slug/Check%20&%20fix%20styling?label=code%20style)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-
----
-This repo can be used to scaffold a Laravel package. Follow these steps to get started:
-
-1. Press the "Use template" button at the top of this repo to create a new repo with the contents of this skeleton
-2. Run "php ./configure.php" to run a script that will replace all placeholders throughout all the files
-3. Remove this block of text.
-4. Have fun creating your package.
-5. If you need help creating a package, consider picking up our <a href="https://laravelpackage.training">Laravel Package Training</a> video course.
----
-
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
-
-## Support us
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/:package_name.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/:package_name)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/combindma/yotpo-api.svg?style=flat-square)](https://packagist.org/packages/combindma/yotpo-api)
+[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/combindma/yotpo-api/Check%20&%20fix%20styling?label=code%20style)](https://github.com/combindma/yotpo-api/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/combindma/yotpo-api.svg?style=flat-square)](https://packagist.org/packages/combindma/yotpo-api)
 
 ## Installation
 
 You can install the package via composer:
 
 ```bash
-composer require :vendor_slug/:package_slug
-```
-
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --provider="VendorName\Skeleton\SkeletonServiceProvider" --tag=":package_slug-migrations"
-php artisan migrate
+composer require combindma/yotpo-api
 ```
 
 You can publish the config file with:
 ```bash
-php artisan vendor:publish --provider="VendorName\Skeleton\SkeletonServiceProvider" --tag=":package_slug-config"
+php artisan vendor:publish --provider="Combindma\YotpoApi\YotpoApiServiceProvider" --tag="yotpo-config"
 ```
 
 This is the contents of the published config file:
 
 ```php
 return [
+    /*
+    * Enable or disable Yotpo api. Useful for local development.
+    */
+    'enabled' => env('YOTPO_ENABLED', false),
+    
+    /*
+    * Core API V3 Credentials
+    */
+    'app_key' => env('YOTPO_APP_KEY'),
+    'secret_key' => env('YOTPO_SECRET_KEY'),
+
+    /*
+    * Loyalty & Referrals API Credentials
+    */
+    'loyalty_api_key' => env('LOYALTY_API_KEY'),
+    'loyalty_guid_key' => env('LOYALTY_GUID_KEY'),
+
+    /*
+     * CDNs
+     * */
+    'loyalty_js_sdk_url' => env('LOYALTY_JS_SDK_URL'),
+    'loyalty_modules_loader_url' => env('LOYALTY_MODULES_LOADER_URL'),
 ];
 ```
 
 ## Usage
+* You should create a free account in https://yotpo.com and add your credentials in .env file
+* You must add `Combindma\YotpoApi\Traits\YotpoCustomer` to user model or implement yours. Just be sure to have the same structure (same array keys).
+* You must add `Combindma\YotpoApi\Traits\YotpoPurchase` to order model or implement yours. Just be sure to have the same structure (same array keys).
 
-```php
-$skeleton = new VendorName\Skeleton();
-echo $skeleton->echoPhrase('Hello, VendorName!');
-```
+For further documentation
+* Loyalty API Documentation: https://loyaltyapi.yotpo.com/reference
+* Core API V3 Documentation: https://core-api.yotpo.com/reference
+
+Example of use: create a customer in loyality program
+````PHP
+use Combindma\YotpoApi\Facades\YotpoApi;
+
+//yotpoApiData is implemented in Combindma\YotpoApi\Traits\YotpoCustomer. You can create yours.
+YotpoApi::createOrUpdateLoyaltyCustomer($user->yotpoApiData());
+````
 
 ## Testing
 
@@ -69,17 +73,9 @@ composer test
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
-## Contributing
-
-Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
-
-## Security Vulnerabilities
-
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
-
 ## Credits
 
-- [:author_name](https://github.com/:author_username)
+- [Combind](https://github.com/combindma)
 - [All Contributors](../../contributors)
 
 ## License

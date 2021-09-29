@@ -1,6 +1,6 @@
 <?php
 
-namespace VendorName\Skeleton\Tests;
+namespace Combindma\YotpoApi\Tests;
 
 class ExampleTest extends TestCase
 {
