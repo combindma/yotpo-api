@@ -30,12 +30,17 @@ return [
     'loyalty_modules_loader_url' => env('LOYALTY_MODULES_LOADER_URL'),
 
     /*
+     * Refer link used by Loyalty Program
+     * */
+    'refer_link' => 'http://rwrd.io',
+
+    /*
      * Default currency code you want to use. Make sure to have the same in your Yotpo Loyalty admin: https://loyalty.yotpo.com/general-settings
      * */
-    'currency' => 'MAD',
+    'currency' => env('YOTPO_DEFAULT_CURRENCY', 'MAD'),
 
     /*
     * Default country code you want to use. This is important for API requests when submitting the phone number
     * */
-    'country' => 'MA'
+    'country' => env('YOTPO_DEFAULT_COUNTRY', 'MA')
 ];
