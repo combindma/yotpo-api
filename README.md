@@ -22,10 +22,15 @@ This is the contents of the published config file:
 ```php
 return [
     /*
-    * Enable or disable Yotpo api. Useful for local development.
+    * Enable or disable Yotpo api. Useful for local development when runing tests.
     */
-    'enabled' => env('YOTPO_ENABLED', false),
-    
+    'api_enabled' => env('YOTPO_API_ENABLED', false),
+
+    /*
+   * Enable or disable Yotpo Loyalty. Useful for local development when runing tests.
+   */
+    'loyalty_enabled' => env('YOTPO_LOYALTY_ENABLED', false),
+
     /*
     * Core API V3 Credentials
     */
@@ -43,6 +48,21 @@ return [
      * */
     'loyalty_js_sdk_url' => env('LOYALTY_JS_SDK_URL'),
     'loyalty_modules_loader_url' => env('LOYALTY_MODULES_LOADER_URL'),
+
+    /*
+     * Refer link used by Loyalty Program
+     * */
+    'refer_link' => 'http://rwrd.io',
+
+    /*
+     * Default currency code you want to use. Make sure to have the same in your Yotpo Loyalty admin: https://loyalty.yotpo.com/general-settings
+     * */
+    'currency' => env('YOTPO_DEFAULT_CURRENCY', 'MAD'),
+
+    /*
+    * Default country code you want to use. This is important for API requests when submitting the phone number
+    * */
+    'country' => env('YOTPO_DEFAULT_COUNTRY', 'MA')
 ];
 ```
 

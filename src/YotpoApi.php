@@ -174,13 +174,13 @@ class YotpoApi
      * customer is eligible and has enough points for the selected redemption option then it will deduct the points
      * from their balance, generate the coupon code, and return it in the response.
      * */
-    public function CreateLoyaltyRedemption(array $customerHash, int $redemptionOptionId)
+    public function CreateLoyaltyRedemption(array $customerHash, int $redemptionOptionId, bool $delay_points_deduction = true)
     {
         $data = [
-            'customer_external_id' => (string)$customerHash['user_id'],
+            'customer_external_id' => $customerHash['user_id'],
             'customer_email' => $customerHash['email'],
             'redemption_option_id' => $redemptionOptionId,
-            'delay_points_deduction' => true,
+            'delay_points_deduction' => $delay_points_deduction,
             'currency' => $customerHash['currency'],
         ];
 
