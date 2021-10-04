@@ -19,10 +19,10 @@ class YotpoApiServiceProvider extends PackageServiceProvider
             ->hasConfigFile('yotpo');
     }
 
-    public function registeringPackage()
+    public function packageRegistered()
     {
-        $this->app->bind('yotpoApi', function ($app) {
-            return new YotpoApi();
+        $this->app->singleton('yotpoapi', function () {
+            return new YotpoApi;
         });
     }
 }

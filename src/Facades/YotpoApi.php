@@ -11,6 +11,6 @@ class YotpoApi extends Facade
 {
     protected static function getFacadeAccessor()
     {
-        return 'yotpoApi';
+        return 'yotpoapi';
     }
 }
